@@ -49,7 +49,39 @@ function App() {
       dataField: "validUntil",
       text: "Expired",
       sort: true,
-    }
+    },
+
+    
+    {
+      dataField: 'entries',
+      text: 'Indexed languages',
+      formatter: (cell, row) => (
+        <ul>
+          {cell.map((entry) => (
+            entry.indexedCount >0 ?
+              <li >{entry.language}</li> : ''
+
+            
+            
+          ))}
+        </ul>
+      ),
+    },
+
+    {
+      dataField: 'entries',
+      text: 'UnIndexed languages',
+      formatter: (cell, row) => (
+        <ul>
+          {cell.map((entry) => (
+            entry.indexedCount == 0 ?
+              <li >{entry.language}</li> : ''
+
+                        
+          ))}
+        </ul>
+      ),
+    },
 
   ]
   const rowEvents = {
