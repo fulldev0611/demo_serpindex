@@ -141,20 +141,34 @@ function App() {
     const endDate = new Date(modalInfo.validUntil);
     const diffTime = Math.abs(endDate - startDate);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));    
+
+    const modalStyle = {
+      display: show ? 'block' : 'none',
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      zIndex: '9999',
+      backgroundColor: 'white',
+      width: '70%', // Set the width of the modal here
+      height: 'auto',
+      overflow: 'auto',
+      padding: '20px',
+      borderRadius: '5px',
+      boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.5)',
+    };
    
     
     return (
       <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Info</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>Title: {modalInfo.title}</p>
-          <p>Created On : {format_date}</p>
-          <p>Category: {modalInfo.category}</p>
-          <p>Expired: {diffDays} days</p>
+        
+        <div style = {modalStyle}>
+          
+          <h2>Title:  {modalInfo.title}</h2>
+          <p><span class = "title_com">Created On</span> : {format_date}</p>
+          <p><span class = "title_com">Category</span>: {modalInfo.category}</p>
+          <p><span class = "title_com">Expired</span>: {diffDays} days</p>
 
-          <div>
             <table class="table" >
               <thead>
                 <tr>
@@ -189,7 +203,7 @@ function App() {
             </table>
           </div>
 
-        </Modal.Body>
+        
       </Modal>
     )
   }
