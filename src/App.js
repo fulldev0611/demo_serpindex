@@ -6,8 +6,10 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import Pagination from 'react-bootstrap-table2-paginator';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import { Modal, Button } from 'react-bootstrap';
+
+
 function App() {
-  const { SearchBar } = Search;
+  const {SearchBar} = Search;
   const [data, setData] = useState([])
   const [modalInfo, setmodalInfo] = useState([])
   const [showModal, setShowModal] = useState(false)
@@ -20,6 +22,7 @@ function App() {
   const getData = () => {
     axios("https://serpindex-demo.svc.violetvault.com/api/index").then((res) =>
       setData(res.data)
+
     )
   }
 
@@ -28,6 +31,11 @@ function App() {
     {
       dataField: "createdOn",
       text: "Create On",
+      formatter: (cell, row) => {
+        const date = new Date(cell);
+        return date.toLocaleString();
+      }      
+
 
     },
     {
@@ -47,8 +55,16 @@ function App() {
     },
     {
       dataField: "validUntil",
-      text: "Expired",
+      text: "Days until expired",
       sort: true,
+      formatter: (cell, row) => {
+        
+        const startDate = new Date(row.createdOn);
+        const endDate = new Date(row.validUntil);
+        const diffTime = Math.abs(endDate - startDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return `${diffDays} days`;
+      },
     },
 
     
@@ -59,10 +75,25 @@ function App() {
         <ul>
           {cell.map((entry) => (
             entry.indexedCount >0 ?
-              <li >{entry.language}</li> : ''
+              <li key={entry.title} style ={{'color':'red', textAlign:'left'}}>{entry.language}</li> : ''           
+            
+          ))}
+        </ul>
+      ),
+    },
 
-            
-            
+   
+
+    {
+      dataField: 'entries',
+      text: 'UnIndexed languages',
+     
+      formatter: (cell, row) => (
+        <ul>
+          {cell.map((entry) => (
+            entry.indexedCount == 0 ?
+              <li style ={{color: 'blue', textAlign:'left'}} >{entry.language}</li> : ''
+                                      
           ))}
         </ul>
       ),
@@ -70,36 +101,48 @@ function App() {
 
     {
       dataField: 'entries',
-      text: 'UnIndexed languages',
-      formatter: (cell, row) => (
-        <ul>
-          {cell.map((entry) => (
-            entry.indexedCount == 0 ?
-              <li >{entry.language}</li> : ''
+      text: 'Indexed Count',
+      formatter: (cell, row) => {
+        const index_array = cell.map((entry) => entry.indexedCount);
+        const sumIndex = index_array.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        
+        const index_total_array = cell.map((entry) => entry.indexedTotal);
+        const sumIndex_total = index_total_array.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-                        
-          ))}
-        </ul>
-      ),
+        const index_valid_array = cell.map((entry) => entry.indexedValidCount);
+        const sumIndex_valid = index_valid_array.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+      
+
+        return `${sumIndex} / ${sumIndex_valid} /  ${sumIndex_total}`;
+       
+     },
     },
 
-  ]
+  ];
+
   const rowEvents = {
     onClick: (e, row) => {
-      console.log(row)
-      setmodalInfo(row)
-      tooggleTrueFalse()
+      setmodalInfo(row);
+      tooggleTrueFalse();
     }
   }
 
   const tooggleTrueFalse = () => {
-    setShowModal(handleShow)
+    setShowModal(handleShow);
   }
-
-  
 
 
   const ModalContent = () => {
+    let creat_on_date = new Date(modalInfo.createdOn) ;
+    let format_date = creat_on_date.toLocaleString(); 
+    let expired_format = new Date(modalInfo.validUntil).toLocaleString() ;
+
+    const startDate = new Date(modalInfo.createdOn);
+    const endDate = new Date(modalInfo.validUntil);
+    const diffTime = Math.abs(endDate - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));    
+   
+    
     return (
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -107,33 +150,41 @@ function App() {
         </Modal.Header>
         <Modal.Body>
           <p>Title: {modalInfo.title}</p>
-          <p>Created On : {modalInfo.createdOn}</p>
+          <p>Created On : {format_date}</p>
           <p>Category: {modalInfo.category}</p>
-          <p>Expired: {modalInfo.validUntil}</p>
+          <p>Expired: {diffDays} days</p>
+
           <div>
-            <table class="table">
+            <table class="table" >
               <thead>
                 <tr>
                   <th scope="col">index count</th>
                   <th scope="col">index total</th>
                   <th scope="col">language</th>
                   <th scope='col'>url</th>
+                  <th scope='col'>*</th>
                 </tr>
               </thead>
               <tbody>
                 {modalInfo.entries.map((item) => {
+
+                  const indexedOn = new Date(item.results[0].indexedOn);
+                  const createdOn = new Date(item.createdOn);
+
+                  const diffTime_index = Math.abs(indexedOn - createdOn);
+                  const diffDays_index = Math.ceil(diffTime_index / (1000 * 60 * 60 * 24));
+             
+
                   return (
                     <tr>
                       <td>{item.indexedCount}</td>
                       <td>{item.indexedTotal}</td>
                       <td>{item.language}</td>
-                      <td>{item.url}</td>
+                      <td style={{ whiteSpace: 'pre-wrap' }}> {item.url} </td>
+                      <td>{diffDays_index} days </td>
                     </tr>
                   )
-
                 })}
-
-
               </tbody>
             </table>
           </div>
@@ -159,7 +210,6 @@ function App() {
               <hr />
               <BootstrapTable
                 rowEvents={rowEvents}
-
                 striped
                 hover
                 condensed
