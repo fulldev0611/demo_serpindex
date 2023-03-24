@@ -75,7 +75,7 @@ function App() {
         <ul>
           {cell.map((entry) => (
             entry.indexedCount >0 ?
-              <li key={entry.title} style ={{'color':'red', textAlign:'left'}}>{entry.language}</li> : ''           
+              <li  style ={{'color':'red', textAlign:'left'}}>{entry.language}</li> : ''           
             
           ))}
         </ul>
@@ -165,9 +165,9 @@ function App() {
         <div style = {modalStyle}>
           
           <h2>Title:  {modalInfo.title}</h2>
-          <p><span class = "title_com">Created On</span> : {format_date}</p>
-          <p><span class = "title_com">Category</span>: {modalInfo.category}</p>
-          <p><span class = "title_com">Expired</span>: {diffDays} days</p>
+          <p><span className = "title_com">Created On</span> : {format_date}</p>
+          <p><span className = "title_com">Category</span>: {modalInfo.category}</p>
+          <p><span className = "title_com">Expired</span>: {diffDays} days</p>
 
             <table class="table" >
               <thead>
@@ -176,21 +176,35 @@ function App() {
                   <th scope="col">index total</th>
                   <th scope="col">language</th>
                   <th scope='col'>url</th>
-                  <th scope='col'>*</th>
+                  <th scope='col'>*days until indexed</th>
                 </tr>
               </thead>
               <tbody>
                 {modalInfo.entries.map((item) => {
 
-                  const indexedOn = new Date(item.results[0].indexedOn);
-                  const createdOn = new Date(item.createdOn);
+                  let diffDays_index ;
+                  let trStyle;
+                  
+                  if( item.results.length == 0) {
+                    diffDays_index = 'undefined';
+                    
+                  } else {
+                    const indexedOn = new Date(item.results[0].indexedOn);
+                    const createdOn = new Date(item.createdOn);
 
-                  const diffTime_index = Math.abs(indexedOn - createdOn);
-                  const diffDays_index = Math.ceil(diffTime_index / (1000 * 60 * 60 * 24));
-             
-
+                    const diffTime_index = Math.abs(indexedOn - createdOn);
+                    diffDays_index = Math.ceil(diffTime_index / (1000 * 60 * 60 * 24));
+                  }                 
+                  if(item.indexedCount > 0) {
+                    trStyle = {backgroundColor: '#9CFF33' };
+                  } else {
+                    trStyle = {backgroundColor: '#AAB7B8'};
+                  }
+                  
+                  console.log(item);
+                  
                   return (
-                    <tr>
+                    <tr style = {trStyle}>
                       <td>{item.indexedCount}</td>
                       <td>{item.indexedTotal}</td>
                       <td>{item.language}</td>
@@ -207,8 +221,6 @@ function App() {
       </Modal>
     )
   }
-
-  console.log(data)
   return (
     <div className="App">
       <ToolkitProvider
