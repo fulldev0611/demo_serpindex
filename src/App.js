@@ -6,6 +6,10 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import Pagination from 'react-bootstrap-table2-paginator';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import { Modal, Button } from 'react-bootstrap';
+import AddDataForm from './AddDataForm';
+import SaveFormModal from './SaveFormModal.js';
+
+
 
 
 function App() {
@@ -16,9 +20,11 @@ function App() {
   const [show, setShow] = useState(false)
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
+  
   useEffect(() => {
     getData()
   }, [])
+
   const getData = () => {
     axios("https://serpindex-demo.svc.violetvault.com/api/index").then((res) =>
       setData(res.data)
@@ -156,8 +162,7 @@ function App() {
       padding: '20px',
       borderRadius: '5px',
       boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.5)',
-    };
-   
+    };   
     
     return (
       <Modal show={show} onHide={handleClose}>
@@ -200,8 +205,7 @@ function App() {
                   } else {
                     trStyle = {backgroundColor: '#AAB7B8'};
                   }
-                  
-                  console.log(item);
+
                   
                   return (
                     <tr style = {trStyle}>
@@ -221,8 +225,37 @@ function App() {
       </Modal>
     )
   }
+   
+  const [showFormModal, setShowFormModal] = useState(false);
+
+  const handleSave = (data) => {
+    // Save the data to your data source
+    axios.post('https://serpindex-demo.svc.violetvault.com/api/index', data)
+    .then(response => {
+      console.log(response);
+      alert(response);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+
+    console.log(data);
+  };
+
+  const openFormModal = () => {
+    setShowFormModal(true);
+  };
+
+  const closeFormModal = () => {
+    setShowFormModal(false);
+  };
+
+
+  
+
   return (
     <div className="App">
+      
       <ToolkitProvider
         keyField="id"
         data={data}
@@ -232,8 +265,16 @@ function App() {
         {
           props => (
             <div>
-              <SearchBar {...props.searchProps} />
+              
+              <SearchBar {...props.searchProps} /> 
+              <Button onClick={openFormModal}  >Add New Search Index</Button>
+                {showFormModal && (
+                  <Modal show = {showFormModal} onHide = {closeFormModal}>
+                    <SaveFormModal saveData={handleSave} onClose={closeFormModal} show = {showFormModal} />
+                  </Modal>
+                )}
               <hr />
+              
               <BootstrapTable
                 rowEvents={rowEvents}
                 striped
@@ -248,7 +289,9 @@ function App() {
 
       </ToolkitProvider>
 
+      
       {show ? <ModalContent /> : null}
+
     </div>
   );
 }
