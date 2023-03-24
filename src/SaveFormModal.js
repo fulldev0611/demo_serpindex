@@ -38,28 +38,17 @@ function SaveFormModal(props) {
       <div style = {modalStyle}>
         <Form onSubmit={handleSubmit}>
             
-            <Form.Label>Id</Form.Label>
-            <Form.Control type="text" placeholder="Id" name="id" value = {formData.id || ''} onChange={handleInputChange} />
-            
-            <Form.Label>Title</Form.Label>
-            <Form.Control type="text" placeholder="Title" name="title" value = {formData.title || ''} onChange={handleInputChange} />
-
+           
             <Form.Label>Category </Form.Label>
             <Form.Control type="text" placeholder="Category" name="category" value = {formData.category || ''} onChange={handleInputChange} />
 
-            <Form.Label>Domain </Form.Label>
-            <Form.Control type="text" placeholder=" Domain" name="domain"  onChange={handleInputChange} />
-
-            <Form.Label>Created Date </Form.Label>
-            <Form.Control type="text" placeholder="Created Date" name="createdOn"  onChange={handleInputChange} />
+            <Form.Label>URL  </Form.Label>
+            <Form.Control type="text" placeholder="url" name="url"  onChange={handleInputChange} />
 
             <Form.Label>ValidUntil </Form.Label>
             <Form.Control type="text" placeholder="ValidUntil" name="validUntil"  onChange={handleInputChange} />
 
-           
-
-            <Form.Label> Entries</Form.Label>
-            <Form.Control type="text" placeholder="" name="entries"  onChange={handleInputChange} />
+                     
 
             <Button variant="primary" style={{marginTop:"30px"}}  type="submit">
                 Submit
