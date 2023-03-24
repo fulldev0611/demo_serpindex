@@ -6,7 +6,6 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import Pagination from 'react-bootstrap-table2-paginator';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import { Modal, Button } from 'react-bootstrap';
-import AddDataForm from './AddDataForm';
 import SaveFormModal from './SaveFormModal.js';
 
 
@@ -230,7 +229,7 @@ function App() {
 
   const handleSave = (data) => {
     // Save the data to your data source
-    axios.post('https://serpindex-demo.svc.violetvault.com/api/index', data)
+    axios.post('https://serpindex-demo.svc.violetvault.com/api/Index', data)
     .then(response => {
       console.log(response);
       alert(response);
