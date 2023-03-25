@@ -1,8 +1,3 @@
-My skype id is live:.cid.192d49cee6baddf9
-please add me on your skype.
-
-
-
 # Create React App
 
 This directory is a brief example of a [Create React App](https://github.com/facebook/create-react-app) site that can be deployed to Vercel with zero configuration.
